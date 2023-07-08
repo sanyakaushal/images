@@ -1,51 +1,46 @@
-Step 1: Analyzing the Compromised Workstation
+ Digital Forensics : Investigating Brute Force and Suspicious Activity  
+This is a walkthrough of a digital forensics investigation, where we carefully examine signs of brute force and suspicious activity using a pcap file and an sslkeylogfile text file. In this exercise, we explore into the details of a compromised system, analyzing logs, captured data, and HTTP commands to uncover the truth behind the attack.
 
-During my analysis, I observed unusual login activity on the compromised workstation. Whenever a user logs in, a Command Prompt window automatically opens, displaying a list of images being uploaded to an undisclosed location. This raises suspicions and indicates a compromise.
+    Signs of Brute Force:
 
-Step 2: Determining the Attacker's Objective
+To determine if there were any signs of brute force, I analyzed the logs for failed login attempts and identified the following:
 
-Further investigation reveals that the attacker's objective is to exfiltrate files from the workstation, specifically images from the "C:/Systemcore/library" directory. I discovered an "upload.ps1" script in the "C:\Systemcore" folder, which facilitates the exfiltration process. This script is designed to upload files from the source directory ("C:\Systemcore\library") to a remote FTP server at "ftp://dlpuser:rNrKYTX9g7z3RgJRmxWuGHbeu@ftp.dlptest.com."
+    User Account Brute Forced: The account "user" was targeted for the brute force attack.
+    Multiple Failed Login Attempts: There were numerous failed login attempts from the IP address 142.55.0.11.
 
-Step 3: Identifying Persistence Mechanisms
+    Success and Suspicious Activity:
 
-To maintain unauthorized access to the compromised workstation, the attacker employs a persistence mechanism. I found a script named "Untitled4.ps1" scheduled to execute "Untitled2.ps1" daily at 3 am. Additionally, "Untitled2.ps1" is triggered during user logins, ensuring persistent unauthorized access.
+Regarding the success of the brute force attack, there were instances of successful logins into the "user" account. However, these sessions were short-lived, automatically closing within a few seconds. The persistence of the brute force attempts around these successful logins raised suspicions.
 
-Step 4: Restoration and Mitigation Measures
+An intriguing event occurred at 14:04:02, where a successful login took place. This session, marked as session 22, displayed suspicious activity with the creation of a new user named "uesr." The brute force attacks ceased after this event, making session 22 highly suspicious.
 
-To restore the compromised system's security, I recommend the following mitigation measures:
+    Evidence of New User Creation:
 
-    Removal of suspicious scheduled tasks: Eliminate the "Untitled4.ps1" script and associated tasks to prevent further unauthorized execution.
-    Deletion of PowerShell scripts: Remove all PowerShell scripts, including "Upload.ps1," to disable the exfiltration mechanism.
-    Network-wide investigation: Extend the investigation to other systems within the network. Look for similar files, scheduled tasks, or indicators of compromise. Utilize network monitoring tools such as Intrusion Detection Systems (IDS) or packet sniffers to identify potential compromises and block malicious traffic.
+[Please refer to the provided screenshot for evidence of the new user creation.]
 
-Step 5: Network-Wide Compromise Assessment
+The screenshot exhibits the creation of the "uesr" account, which can be easily mistaken for the legitimate "user" account by system administrators.
 
-To assess if other systems in the network have been compromised using the same malware, follow these steps:
+The relevance of this new user creation to system compromise is that the attacker can now utilize the "uesr" account to gain access to the server, even if the password for the "user" account is changed. This can potentially evade detection since it closely resembles a valid username.
 
-    Searching for common files and scheduled tasks: Conduct a systematic search for files and scheduled tasks resembling those found on the compromised workstation.
-    Network traffic analysis: Utilize IDS or packet sniffers to identify any packets originating from or destined for the identified FTP server. Monitor and block such traffic to detect potential compromises across the network.
+    Suspicious/Malicious HTTP Commands:
 
-By diligently following these investigation procedures and implementing the recommended mitigation measures, you can restore the compromised workstation's security and safeguard the broader network against potential threats.
+To uncover any suspicious or malicious HTTP commands, I examined the captured commands and their potential implications:
 
+[Please refer to the provided screenshots for the list of commands.]
 
-Step 6: Recommendations for Future Prevention
+The captured commands indicate that the attacker utilized a PHP web shell to establish a shell session on the target machine and continue their attack. The attacker sent GET requests with shell commands to execute on the server.
 
-To prevent similar methods from being successful in the future and enhance overall system security, consider the following recommendations:
+The commands included listing files using 'ls,' checking the user with 'whoami,' and attempting to copy the "customer.csv" file to various locations. Eventually, the attacker succeeded in copying the sensitive "customer.csv" file, which contains personal information such as full names, emails, and credit card numbers of customers.
 
-    Strengthen access controls: Review and improve user access controls, employing the principle of least privilege to limit unauthorized access to sensitive files and directories.
+    Prevention Measures:
 
-    Keep software up to date: Regularly update and patch all software, including operating systems, applications, and security tools, to address vulnerabilities and protect against known threats.
+To mitigate similar attacks, several preventive measures can be implemented:
 
-    Provide security awareness training: Educate users on best practices for maintaining a secure environment, including strong passwords, recognizing phishing attempts, and avoiding suspicious downloads or websites.
+    Use stronger passwords or implement key-based authentication.
+    Consider using nonstandard SSH ports to make it harder for attackers to find the SSH service.
+    Implement mechanisms to limit login attempts and install a firewall to block suspicious login attempts.
+    Adhere to the principle of least privilege when creating user accounts, granting only necessary privileges.
+    Regularly audit file events, including create, modify, and delete actions.
+    Monitor HTTP logs for signs of data exfiltration or suspicious activities.
 
-    Implement network segmentation: Separate the network into segments or zones to limit the impact of a compromise and prevent lateral movement by attackers. Consider isolating workstations that do not require FTP access from those that do.
-
-    Configure firewall rules: Utilize a firewall solution to control inbound and outbound traffic. Configure firewall rules to block FTP ports (typically port 21 for FTP control connection and port range 20-21 for FTP data connections) for workstations that do not need FTP access.
-
-    Enable robust monitoring and logging: Implement comprehensive logging and monitoring systems to detect and alert on suspicious activities, enabling proactive threat detection and response.
-
-    Conduct regular security assessments: Perform periodic vulnerability assessments and penetration testing to identify and address system weaknesses before they can be exploited.
-
-    Establish an incident response plan: Develop a well-defined incident response plan that outlines roles, responsibilities, communication protocols, and remediation procedures to effectively respond to security incidents.
-
-In conclusion, this investigation has provided me with valuable hands-on experience in digital forensics, allowing me to apply theoretical knowledge to real-world scenarios. It highlights the critical role of digital forensics in detecting and responding to security incidents, emphasizing the importance of proactive measures in maintaining a secure digital environment. Thank you for your attention, and I'm happy to answer any questions you may have.
+By implementing these preventive measures, the risk of successful brute force attacks and subsequent compromise can be significantly reduced.
