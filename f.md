@@ -1,34 +1,30 @@
-As part of my cybersecurity studies, I recently undertook a challenging digital forensics assignment focused on advanced information systems forensics and electronic discovery. The assignment involved investigating a compromised workstation and implementing necessary measures to restore its security. Here are the key findings and actions taken during the investigation:
+Step 1: Analyzing the Compromised Workstation
 
-    Detecting Compromise: Unusual Login Activity
+During my analysis, I observed unusual login activity on the compromised workstation. Whenever a user logs in, a Command Prompt window automatically opens, displaying a list of images being uploaded to an undisclosed location. This raises suspicions and indicates a compromise.
 
-Upon analyzing the compromised workstation, we observed abnormal login activity. Every time a user logged in, a Command Prompt window automatically opened, displaying a list of images being uploaded to an undisclosed location. This unusual behavior raised suspicion and indicated a compromise.
+Step 2: Determining the Attacker's Objective
 
-    Attacker's Objective: File Exfiltration
+Further investigation reveals that the attacker's objective is to exfiltrate files from the workstation, specifically images from the "C:/Systemcore/library" directory. I discovered an "upload.ps1" script in the "C:\Systemcore" folder, which facilitates the exfiltration process. This script is designed to upload files from the source directory ("C:\Systemcore\library") to a remote FTP server at "ftp://dlpuser:rNrKYTX9g7z3RgJRmxWuGHbeu@ftp.dlptest.com."
 
-Further analysis revealed that the attacker's goal was to exfiltrate files from the workstation, specifically images from the "C:/Systemcore/library" directory. We discovered an "upload.ps1" script in the "C:\Systemcore" folder, responsible for facilitating the exfiltration process. The script was designed to upload files from the source directory ("C:\Systemcore\library") to a remote FTP server at "ftp://dlpuser:rNrKYTX9g7z3RgJRmxWuGHbeu@ftp.dlptest.com."
+Step 3: Identifying Persistence Mechanisms
 
-Additional suspicious files and applications were found in the same folder, indicating a coordinated effort by the attacker. These files included "load.cmd," "test.bat," "Untitled4.ps1," "Upload.ps1," "PS1 to Service.exe," and "Untitled2.ps1," suggesting a complex attack strategy.
+To maintain unauthorized access to the compromised workstation, the attacker employs a persistence mechanism. I found a script named "Untitled4.ps1" scheduled to execute "Untitled2.ps1" daily at 3 am. Additionally, "Untitled2.ps1" is triggered during user logins, ensuring persistent unauthorized access.
 
-    Persistence Mechanisms: Maintaining Unauthorized Access
+Step 4: Restoration and Mitigation Measures
 
-To ensure continued access to the compromised workstation, the attacker employed a persistence mechanism. We discovered the presence of "Untitled4.ps1," a script scheduled to execute "Untitled2.ps1" daily at 3 am. Additionally, "Untitled2.ps1" was triggered during the user's login, establishing persistent unauthorized access.
+To restore the compromised system's security, I recommend the following mitigation measures:
 
-    Restoration and Mitigation Measures
+    Removal of suspicious scheduled tasks: Eliminate the "Untitled4.ps1" script and associated tasks to prevent further unauthorized execution.
+    Deletion of PowerShell scripts: Remove all PowerShell scripts, including "Upload.ps1," to disable the exfiltration mechanism.
+    Network-wide investigation: Extend the investigation to other systems within the network. Look for similar files, scheduled tasks, or indicators of compromise. Utilize network monitoring tools such as Intrusion Detection Systems (IDS) or packet sniffers to identify potential compromises and block malicious traffic.
 
-To restore the compromised system to a secure state, the following mitigation measures were recommended:
+Step 5: Network-Wide Compromise Assessment
 
-    Removal of suspicious scheduled tasks: The "Untitled4.ps1" script and associated tasks needed to be eliminated to prevent further unauthorized execution.
-    Deletion of PowerShell scripts: All PowerShell scripts, including "Upload.ps1," were advised to be removed to disable the exfiltration mechanism.
-    Network-wide investigation: It was essential to extend the investigation to other systems within the network. This involved searching for similar files, scheduled tasks, or indicators of compromise. Network monitoring tools, such as Intrusion Detection Systems (IDS) or packet sniffers, could aid in identifying potential compromises and blocking malicious traffic.
+To assess if other systems in the network have been compromised using the same malware, follow these steps:
 
-    Network-Wide Compromise Assessment
+    Searching for common files and scheduled tasks: Conduct a systematic search for files and scheduled tasks resembling those found on the compromised workstation.
+    Network traffic analysis: Utilize IDS or packet sniffers to identify any packets originating from or destined for the identified FTP server. Monitor and block such traffic to detect potential compromises across the network.
 
-To determine if other systems in the network were compromised using the same malware, the following steps were suggested:
+By diligently following these investigation procedures and implementing the recommended mitigation measures, you can restore the compromised workstation's security and safeguard the broader network against potential threats.
 
-    Searching for common files and scheduled tasks: A systematic search for files and scheduled tasks resembling those found on the compromised workstation should be conducted.
-    Network traffic analysis: The use of IDS or packet sniffers can help identify any packets originating from or destined for the identified FTP server. Monitoring and blocking such traffic would assist in detecting potential compromises across the network.
-
-By diligently following these investigation procedures and implementing the recommended mitigation measures, we aimed to restore the compromised workstation's security and safeguard the broader network against potential threats.
-
-This assignment provided valuable hands-on experience in digital forensics, allowing me to apply theoretical knowledge to real-world scenarios. It emphasized the critical role of digital forensics in detecting and responding to security incidents, reinforcing the significance of proactive measures in ensuring a secure digital environment
+In conclusion, this investigation has provided me with valuable hands-on experience in digital forensics, allowing me to apply theoretical knowledge to real-world scenarios. It highlights the critical role of digital forensics in detecting and responding to security incidents, emphasizing the importance of proactive measures in maintaining a secure digital environment. Thank you for your attention, and I'm happy to answer any questions you may have.
